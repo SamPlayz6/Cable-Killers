@@ -8,7 +8,7 @@ BUFF_SIZE = 65536
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 client_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
 host_name = socket.gethostname()
-host_ip = '192.168.11.105'#  socket.gethostbyname(host_name)
+host_ip = '192.168.43.207'#  socket.gethostbyname(host_name)
 print(host_ip)
 port = 9999
 message = b'Hello'
@@ -20,9 +20,14 @@ while True:
 	data = base64.b64decode(packet,' /')
 	npdata = np.fromstring(data,dtype=np.uint8)
 	frame = cv2.imdecode(npdata,1)
+	r = 700 / frame.shape[1]
+	dim = (700,int(frame.shape[0]*r))
 	frame = cv2.putText(frame,'FPS: '+str(fps),(10,40),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,0,255),2)
+	frame = cv2.resize(frame,dim,interpolation = cv2.INTER_AREA)
 	cv2.imshow("RECEIVING VIDEO",frame)
 	key = cv2.waitKey(1) & 0xFF
+	t = time.time()
+	#print(t)
 	if key == ord('q'):
 		client_socket.close()
 		break
